@@ -1,5 +1,8 @@
 package java_notepad;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -8,7 +11,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-public class GUI {
+public class GUI implements ActionListener {
 	
 	JFrame window; //The main window for our notepad, initialized in createWindow()
 	JTextArea textArea; //The area where we write the text, initialized in createTextArea()
@@ -17,6 +20,8 @@ public class GUI {
 	JMenu menuFile, menuEdit, menuFormat, menuColor;
 	JMenuItem iNew, iOpen, iSave, iSaveAs, iExit;
 	JMenuItem iRedo, iUndo;
+	
+	Function_File file = new Function_File(this);
 	
 	public static void main(String[] args) {
 		new GUI(); // Class object, the main driver for our program.
@@ -69,11 +74,21 @@ public class GUI {
 	
 	public void createFileMenu() {
 		iNew = new JMenuItem("New");
+		iNew.addActionListener(this);
+		iNew.setActionCommand("New");
 		menuFile.add(iNew);
+		
+		iOpen = new JMenuItem("Open");
+		iOpen.addActionListener(this);
+		iOpen.setActionCommand("Open");
+		menuFile.add(iOpen);
+		
 		iSave = new JMenuItem("Save");
 		menuFile.add(iSave);
+		
 		iSaveAs = new JMenuItem("Save as");
 		menuFile.add(iSaveAs);
+		
 		iExit = new JMenuItem("Exit");
 		menuFile.add(iExit);
 	}
@@ -83,6 +98,16 @@ public class GUI {
 		menuEdit.add(iRedo);
 		iUndo = new JMenuItem("Undo");
 		menuEdit.add(iUndo);
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		String command = e.getActionCommand();
+		switch(command) {
+		case "New": file.newFile(); break;
+		case "Open": file.openFile(); break;
+		}
+		
 	}
 	
 }	
