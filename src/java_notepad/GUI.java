@@ -18,8 +18,8 @@ public class GUI implements ActionListener {
 	JScrollPane pane; //The scrolling pane
 	JMenuBar menuBar;
 	JMenu menuFile, menuEdit, menuFormat, menuColor;
-	JMenuItem iNew, iOpen, iSave, iSaveAs, iExit;
-	JMenuItem iRedo, iUndo;
+	JMenuItem iNew, iOpen, iSave, iSaveAs, iExit; //For menuFie
+	JMenuItem iRedo, iUndo; //For menuEdit
 	
 	Function_File file = new Function_File(this);
 	
@@ -52,7 +52,7 @@ public class GUI implements ActionListener {
 		textArea.setWrapStyleWord(false);
 		
 		pane = new JScrollPane(textArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		pane.setBorder(BorderFactory.createEmptyBorder());
+		pane.setBorder(BorderFactory.createEmptyBorder()); //Removes the solid border between menu bar and text area
 		
 		window.add(pane);
 	}
@@ -69,7 +69,7 @@ public class GUI implements ActionListener {
 		menuBar.add(menuFile);
 		menuBar.add(menuEdit);
 		menuBar.add(menuFormat);
-		menuBar.add(menuColor);
+		menuBar.add(menuColor);		//JMenuBar -> JMenu -> JMenuItem
 	}
 	
 	public void createFileMenu() {
