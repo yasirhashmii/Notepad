@@ -10,6 +10,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.undo.UndoManager;
 
 public class GUI implements ActionListener {
 	
@@ -22,6 +23,7 @@ public class GUI implements ActionListener {
 	JMenuItem iRedo, iUndo; //For menuEdit
 	
 	Function_File file = new Function_File(this);
+	Function_Edit edit = new Function_Edit(this);
 	
 	public static void main(String[] args) {
 		new GUI(); // Class object, the main driver for our program.
@@ -32,7 +34,8 @@ public class GUI implements ActionListener {
 		createTextArea();
 		createMenuBar();
 		createFileMenu();
-		createEditMenu();
+		createEditMenu();		
+
 		
 		window.setVisible(true);
 	}
@@ -70,6 +73,7 @@ public class GUI implements ActionListener {
 		menuBar.add(menuEdit);
 		menuBar.add(menuFormat);
 		menuBar.add(menuColor);		//JMenuBar -> JMenu -> JMenuItem
+		
 	}
 	
 	public void createFileMenu() {
@@ -84,19 +88,30 @@ public class GUI implements ActionListener {
 		menuFile.add(iOpen);
 		
 		iSave = new JMenuItem("Save");
+		iSave.addActionListener(this);
+		iSave.setActionCommand("Save");
 		menuFile.add(iSave);
 		
 		iSaveAs = new JMenuItem("Save as");
+		iSaveAs.addActionListener(this);
+		iSaveAs.setActionCommand("SaveAs");;
 		menuFile.add(iSaveAs);
 		
 		iExit = new JMenuItem("Exit");
+		iExit.addActionListener(this);
+		iExit.setActionCommand("Exit");
 		menuFile.add(iExit);
 	}
 	
 	public void createEditMenu() {
 		iRedo = new JMenuItem("Redo");
+		iRedo.addActionListener(this);
+		iRedo.setActionCommand("Redo");
 		menuEdit.add(iRedo);
+		
 		iUndo = new JMenuItem("Undo");
+		iUndo.addActionListener(this);
+		iUndo.setActionCommand("Undo");
 		menuEdit.add(iUndo);
 	}
 
@@ -106,6 +121,11 @@ public class GUI implements ActionListener {
 		switch(command) {
 		case "New": file.newFile(); break;
 		case "Open": file.openFile(); break;
+		case "Save": file.save(); break;
+		case "SaveAs": file.saveAs(); break;
+		case "Exit": file.exit(); break;
+		case "Redo": edit.redo(); break;
+		case "Undo": edit.undo(); break;
 		}
 		
 	}
