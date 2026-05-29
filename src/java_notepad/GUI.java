@@ -2,7 +2,6 @@ package java_notepad;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -10,7 +9,6 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.undo.UndoManager;
 
 public class GUI implements ActionListener {
 	
@@ -18,12 +16,16 @@ public class GUI implements ActionListener {
 	JTextArea textArea; //The area where we write the text, initialized in createTextArea()
 	JScrollPane pane; //The scrolling pane
 	JMenuBar menuBar;
-	JMenu menuFile, menuEdit, menuFormat, menuColor;
+	JMenu menuFile, menuEdit, menuFormat, menuColor, menuMode;
 	JMenuItem iNew, iOpen, iSave, iSaveAs, iExit; //For menuFie
 	JMenuItem iRedo, iUndo; //For menuEdit
+	JMenuItem iTypeWriter; //For menuMode
+	
 	
 	Function_File file = new Function_File(this);
 	Function_Edit edit = new Function_Edit(this);
+	Function_Mode mode = new Function_Mode(this);
+	Function_Format format = new Function_Format(this);
 	
 	public static void main(String[] args) {
 		new GUI(); // Class object, the main driver for our program.
@@ -34,11 +36,13 @@ public class GUI implements ActionListener {
 		createTextArea();
 		createMenuBar();
 		createFileMenu();
-		createEditMenu();		
-
+		createEditMenu();
+		createFormatMenu();
+		createModeMenu();
 		
 		window.setVisible(true);
 	}
+	
 	
 	public void createWindow() {
 		window = new JFrame("Notepad");
@@ -52,13 +56,27 @@ public class GUI implements ActionListener {
 		textArea = new JTextArea();
 		
 		textArea.setLineWrap(true);
-		textArea.setWrapStyleWord(false);
+		textArea.setWrapStyleWord(true);
+		
+		textArea.getDocument().addUndoableEditListener(e -> {
+			edit.undoManager.addEdit(e.getEdit());
+		});
+		
+		textArea.addCaretListener(new javax.swing.event.CaretListener() {
+			@Override
+			public void caretUpdate(javax.swing.event.CaretEvent e) {
+				if(mode.isTypeWriterMode) {
+					mode.centerLineInscrollPane();
+				}
+			}
+		});
 		
 		pane = new JScrollPane(textArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		pane.setBorder(BorderFactory.createEmptyBorder()); //Removes the solid border between menu bar and text area
 		
 		window.add(pane);
 	}
+	
 	public void createMenuBar() {
 		
 		menuBar = new JMenuBar();
@@ -68,11 +86,13 @@ public class GUI implements ActionListener {
 		menuEdit = new JMenu("Edit");
 		menuFormat = new JMenu("Format");
 		menuColor = new JMenu("Color");
+		menuMode = new JMenu("Mode");
 		
 		menuBar.add(menuFile);
 		menuBar.add(menuEdit);
 		menuBar.add(menuFormat);
 		menuBar.add(menuColor);		//JMenuBar -> JMenu -> JMenuItem
+		menuBar.add(menuMode);
 		
 	}
 	
@@ -114,6 +134,33 @@ public class GUI implements ActionListener {
 		iUndo.setActionCommand("Undo");
 		menuEdit.add(iUndo);
 	}
+	
+	public void createFormatMenu() {
+		JMenu menuFontSize = new JMenu("Font Size");
+		
+		java.awt.event.ActionListener sizeListener = new java.awt.event.ActionListener() {
+			@Override
+			public void actionPerformed(java.awt.event.ActionEvent e) {
+				int size = Integer.parseInt(e.getActionCommand());
+				format.fontSize(size);
+			}
+		};
+		for(int i=8;i<=36;i+=4) {
+			JMenuItem sizeItem = new JMenuItem(String.valueOf(i));
+			sizeItem.addActionListener(sizeListener);
+			sizeItem.setActionCommand(String.valueOf(i));
+			menuFontSize.add(sizeItem);
+		}
+		menuFormat.addSeparator();
+		menuFormat.add(menuFontSize);
+	}
+	
+	public void createModeMenu() {
+		iTypeWriter = new JMenuItem("TypeWriter: Off");
+		iTypeWriter.addActionListener(this);
+		iTypeWriter.setActionCommand("TypeWriter");
+		menuMode.add(iTypeWriter);
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -124,8 +171,12 @@ public class GUI implements ActionListener {
 		case "Save": file.save(); break;
 		case "SaveAs": file.saveAs(); break;
 		case "Exit": file.exit(); break;
+		
 		case "Redo": edit.redo(); break;
 		case "Undo": edit.undo(); break;
+		
+		case "TypeWriter": mode.typeWriter(); break;
+		
 		}
 		
 	}

@@ -12,12 +12,14 @@ public class Function_File {
 	public Function_File(GUI gui) {
 		this.gui = gui;
 	}
+	
 	public void newFile() {
 		gui.textArea.setText("");
 		gui.window.setTitle("New");
 		fileName = null;
 		fileAddress = null;
 	}
+	
 	public void openFile() {
 		FileDialog fd = new FileDialog(gui.window, "Open", FileDialog.LOAD);
 		fd.setVisible(true);
@@ -38,7 +40,7 @@ public class Function_File {
 			reader.close();
 			
 		} catch(Exception e) {
-			System.err.println("FIle could not be opened");
+			System.err.println("File could not be opened");
 		}
 		
 		
@@ -47,17 +49,17 @@ public class Function_File {
 		if(fileName == null) {
 			saveAs();
 		}else {
-		try {
-			FileWriter fw = new FileWriter(fileAddress+fileName);
-			fw.write(gui.textArea.getText());
-			gui.window.setTitle(fileName);
-			fw.close();
-		}catch(Exception e) {
-			System.err.print("Something went wrong");
+			try {
+				FileWriter fw = new FileWriter(fileAddress+fileName);
+				fw.write(gui.textArea.getText());
+				gui.window.setTitle(fileName);
+				fw.close();
+			}catch(Exception e) {
+				System.err.print("Something went wrong");
+			}
 		}
-		}
-		
 	}
+	
 	public void saveAs() {
 		FileDialog fd = new FileDialog(gui.window, "Save", FileDialog.SAVE);
 		fd.setVisible(true);
